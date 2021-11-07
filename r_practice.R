@@ -1,16 +1,20 @@
+# 棒グラフの作成
 df <- read.csv("SalesData.csv", row.names=1)
 barplot(df$April, names.arg=rownames(df), las=1, main="Sales in April", cex.main=3)
 options(scipen=100)
 par(mar=c(5.1,6.1,5.1,2.1))
 
+# 円グラフの作成
 pie(df$April)
 df2 <- df[order(df$April, decreasing=TRUE),]
 pie(df2$April, clockwise=TRUE, labels=rownames(df2), main="Proportion of sales in April", cex.main=3)
 
+# 折れ線グラフの作成
 df <- read.csv("HeightWeightData.csv")
 par(mar=c(7,6,4,2))
 plot(df$height, df$weight)
 
+# ヒストグラムの作成
 df <- read.csv("MathScores.csv")
 x <- df$Math.test.scores
 hist(x, col="orange", main="Histogram of the math scores")
@@ -19,9 +23,7 @@ hist(x, breaks=5)
 hist(x, breaks=c(50,60,70,80,90,100))
 hist(x, freq=FALSE)
 
-h <- hist(x, freq=FALSE)
-h
-
+# ヒストグラム作成の練習
 df <- read.csv("mini-exam3-2.csv")
 machine1 <- subset(df, df$Machine==1)
 machine2 <- subset(df, df$Machine==2)
@@ -36,11 +38,11 @@ hist(machine2_weight, main="Histogram of Machine2 weight")
 df <- read.csv("RentData.csv")
 df[1:5, ]
 
+# 最頻値
 df <- read.csv("practice3-4-1.csv")
 table(df$Answer)
 
-
-
+# 相関係数
 df <- read.csv("practice3-4-2.csv")
 df
 cor(df$Export, df$Import)
@@ -53,7 +55,6 @@ sdp <- function(x) {
   varp <- var(x)*(length(x)-1)/length(x)
   return(sqrt(varp))
 }
-
 
 # Rによる母平均の検定と推定
 df <- read.csv("mini-exam4-1.csv")
@@ -191,14 +192,44 @@ for (i in 1:n_exp) {
 
 count / n_exp
 
+# Rでのファイル処理(1)
+setwd("./csv_files")
+file <- list.files()
+pdf("figures.pdf")
+for (i in 1:length(file)) {
+  df <- read.csv(file[i])
+  plot(main=file[i], df$x, df$y)
+}
+dev.off()
 
+# Rでのファイル処理(2)
+setwd("./csv_files")
+file <- list.files()
+pdf("histgram.pdf")
+for (i in 1:100) {
+  df <- read.csv(file[i])
+  x <- df$x
+  filename <- paste(as.character(i), ".csv")
+  hist(x, main=filename)
+}
+dev.off()
 
+# パッケージの利用
+install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+plot(iris$Sepal.Length, iris$Sepal.Width, col=as.numeric(iris$Species))
 
+gp <- ggplot(iris, aes(x=Sepal.Length, y=Sepal.Width, colour=Species))
+gp <- gp + geom_point()
+print(gp)
 
-
-
-
-
+install.packages("jsonlite", dependencies = TRUE)
+library(jsonlite)
+df <- fromJSON("http://radioactivity.nsr.go.jp/data/ja/real/area_13000/1301_trend.json")
+v <- df$day$airF$value
+v <- ifelse(v==0, NA, v)
+t <- seq(from=as.POSIXct(df$time)-24*3600+600, by=600, length.out=24*6)
+plot(t, v, type="o")
 
 
 
