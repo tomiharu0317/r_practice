@@ -231,5 +231,56 @@ v <- ifelse(v==0, NA, v)
 t <- seq(from=as.POSIXct(df$time)-24*3600+600, by=600, length.out=24*6)
 plot(t, v, type="o")
 
+df <- read.csv("R_final_1.csv")
+df
+male <- df[df$Gender == 'm', ]
+mean(male$Height)
+median(male[male$Age >= 20, ]$Height)
+cor(male$Height, male$Score)
 
+female <- df[df$Gender == 'f', ]
+var(female$Height)
+cor(df$Height, df$Score)
 
+df <- read.csv("R_final_2.csv")
+x <- df$Income
+s <- sum((x - mean(x))^2)
+chi_0 <- s / 16.15
+chi_0
+qchisq(0.01, 99)
+
+df <- read.csv("R_final_3.csv")
+df
+summary(aov(df$Effect~df$Gender*df$Medicine))
+
+df <- read.csv(("R_final_4.csv"))
+df
+lm(df$Birth_weight~df$Mother_weight)
+result <- anova(lm(df$Birth_weight~df$Mother_weight))
+V_e <- result$`Mean Sq`[2]
+V_e
+
+lm <- lm(df$Birth_weight~df$Mother_weight)
+beta_1 <- lm$coefficients[2]
+beta_1
+
+x <- df$Mother_weight
+s <- sum((x - mean(x))^2)
+s
+t_0 <- beta_1 / sqrt(V_e / s)
+t_0
+
+out <- rep(0, times=10)
+for (i in 1:100){
+  v <- rnorm(10)
+  out <- out + v
+}
+out
+
+stdevp <- rep(0, length=10000) # 各実験で計算される推定値を格納
+for (i in 1:10000) {
+  x <- rnorm(10, sd=5) # 平均が0，分散が52に従う乱数を10個生成する
+  varp <- var(x)*9/10
+  stdevp[i] <- sqrt(varp)
+}
+mean(stdevp)
